@@ -6,43 +6,55 @@ import Layout from '../components/Layout'
 import Tabela from '../components/Tabela'
 import Cliente from '../core/Cliente'
 import ClienteRepositorio from '../core/ClienteRepositorio'
+import useClientes from '../hooks/useClientes'
 
 export default function Home() {
 
-  const [cliente, setCliente] = useState<Cliente>(Cliente.vazio())
-  const [clientes, setClientes] = useState<Cliente[]>([])
-  const [visivel, setVisivel] = useState<'tabela' | 'form'>('tabela')
+  // const [cliente, setCliente] = useState<Cliente>(Cliente.vazio())
+  // const [clientes, setClientes] = useState<Cliente[]>([])
+  // const [visivel, setVisivel] = useState<'tabela' | 'form'>('tabela')
 
-  const repo: ClienteRepositorio = new ColecaoCliente()
+  // const repo: ClienteRepositorio = new ColecaoCliente()
  
-  useEffect(obterTodos, [])
+  // useEffect(obterTodos, [])
 
-  function obterTodos() {
-    repo.obterTodos().then(clientes => {
-      setClientes(clientes)
-      setVisivel('tabela')
-    })
-  }
+  // function obterTodos() {
+  //   repo.obterTodos().then(clientes => {
+  //     setClientes(clientes)
+  //     setVisivel('tabela')
+  //   })
+  // }
 
-  function clienteSelecionado(cliente: Cliente) {
-    setCliente(cliente)
-    setVisivel('form')
-  }
+  // function clienteSelecionado(cliente: Cliente) {
+  //   setCliente(cliente)
+  //   setVisivel('form')
+  // }
 
-  function clienteExcluido(cliente: Cliente) {
+  // async function clienteExcluido(cliente: Cliente) {
+  //   await repo.excluir(cliente)
+  //   obterTodos()
+  // }
 
-  }
+  // function novoCliente() {
+  //   setCliente(Cliente.vazio())
+  //   setVisivel('form')
+  // }
 
-  function novoCliente() {
-    setCliente(Cliente.vazio())
-    setVisivel('form')
-  }
+  // async function salvarCliente(cliente: Cliente) {
+  //   await repo.salvar(cliente)
+  //   obterTodos()
+  // }
 
-  async function salvarCliente(cliente: Cliente) {
-    await repo.salvar(cliente)
-    obterTodos()
-  }
-
+  const {
+    selecionarCliente, 
+    excluirCliente,     
+    cliente,
+    clientes,
+    novoCliente,
+    salvarCliente,
+    tabelaVisivel,
+    exibirTabela
+} = useClientes()
 
   return (
     <div  className={
@@ -53,7 +65,7 @@ export default function Home() {
       `
     }>
       <Layout titulo="Cadastro Simples">
-        {visivel === 'tabela' ? (
+        {tabelaVisivel ? (
             <>
             <div className="flex justify-end">
               <Botao cor="green" className="mb-4 "
@@ -61,14 +73,14 @@ export default function Home() {
               > Novo Cliente </Botao>
             </div>
             <Tabela clientes={clientes} 
-              clienteSelecionado={clienteSelecionado} 
-              clienteExcluido={clienteExcluido}
+              clienteSelecionado={selecionarCliente} 
+              clienteExcluido={excluirCliente}
             />
           </>
         ) : (
           <Formulario 
             cliente={cliente}
-            cancelado={() => setVisivel('tabela')}
+            cancelado={exibirTabela}
             clienteMudou={salvarCliente}
           />
         )}
